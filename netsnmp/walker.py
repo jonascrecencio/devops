@@ -21,8 +21,6 @@ class cbqosWalker():
         if_indexes = session.bulkwalk(INTERFACE_INDEX_OID)
         if_names = session.bulkwalk(INTERFACE_NAME_OID)
         interfaces = { if_indexes[i].value : if_names[i].value for i in range(len(if_indexes))}
-        print(interfaces)
-        exit(0)
         return interfaces
 
         # print(teste1)
