@@ -18,16 +18,11 @@ class cbqosWalker():
 
     def walk_interfaces(self):
         session = Session(hostname=self.address, community=self.community, version=2)
-        if_names = session.bulkwalk(INTERFACE_NAME_OID)
         if_indexes = session.bulkwalk(INTERFACE_INDEX_OID)
-        interfaces = []
-        for name, index in if_names, if_indexes:
-            interfaces.append(
-                {
-                    "Name" : name.value,
-                    "Index" : index.value
-                }
-            )
+        if_names = session.bulkwalk(INTERFACE_NAME_OID)
+        interfaces = { if_indexes[i].value : if_names[i].value for i in range(len(if_indexes))}
+        print(interfaces)
+        exit(0)
         return interfaces
 
         # print(teste1)
