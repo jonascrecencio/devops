@@ -14,6 +14,7 @@ def parse_args():
 def run():
     args = parse_args()
     walker = cbqosWalker(args)
-    walker.walk_snmp()
+    qos_rates = walker.walk_snmp()
+    walker.prom_export(qos_rates)
     #interfaces = walker.walk_interfaces()
     #qos_interfaces = walker.check_qos_policy(interfaces)

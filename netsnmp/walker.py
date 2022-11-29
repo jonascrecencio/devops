@@ -49,51 +49,30 @@ class cbqosWalker():
                 "class" : cbqos_class,
                 "interface" : interface
             })
-        print(if_rates)
-        exit(0)
+        print('########################### if_rates OK')
         return if_rates
 
-    def walk_interfaces(self):
-        session = Session(hostname=self.address, community=self.community, version=2)
-        if_indexes = session.bulkwalk(INTERFACE_INDEX_OID)
-        if_names = session.bulkwalk(INTERFACE_NAME_OID)
-        interfaces = []
-        for i in range(len(if_indexes)):
-            interfaces.append({
-                "Index" : if_indexes[i].value,
-                "Name" : if_names[i].value
-            })
-        return interfaces
-
-        # print(teste1)
-        # exit(0)
-        # device_conn = {
-        #     'device_type': self.device,
-        #     'host': self.address,
-        #     'username': self.user,
-        #     'password': self.password,
-        #     'port': self.port,
-        # }
-        # try:
-        #     net_connect = ConnectHandler(**device_conn)
-        # except NetMikoTimeoutException as e:
-        #     LOGGER.error(e)
-        #     raise SystemExit(1)
-
-    def check_qos_policy(self, interfaces):
-        session = Session(hostname=self.address, community=self.community, version=2)
-        if_cbqos = session.bulkwalk(INTERFACE_CBQOS_INDEX)
-        if_cbqos_indexes =[]
-        for i in range(len(if_cbqos)):
-            if_cbqos_indexes.append({
-                "Index" : if_cbqos[i].value,
-                "Policy" : if_cbqos[i].oid
-            })
-
-        #qos_interfaces = [i for i in interfaces if i["Index"] in ]
-        #print(if_cbqos_index)
-        exit(0)
-        
+    def prom_export(self, rates):
+        print('########################## start http server')
+        start_http_server(PROMETHEUS_CLIENT_PORT)
+        print('#################################33 create metric')
+        metric = Gauge(
+            "cbQosCMPostPolicyBitRate",
+            "The bit rate of the traffic after executing QoS policies.",
+            ['interface', 'direction', 'qos_class', 'policy']
+        )
+        print('######################### metric ok')
+        for rate in rates:
+            prometheus_metric_labels = {
+                "interface" : rate['interface'],
+                "direction" : rate['direction'],
+                "qos_class" : rate['qos_class'],
+                "policy" : rate['policy']
+            }
+            print('############ metric', prometheus_metric_labels)
+            metric.labels(**prometheus_metric_labels).set(rate['rate'])
+            print('########### set metric ok')
+        print('Done.')
 # def init_metric():
 #     class_rate = Gauge(
 #         "cbQosCMPostPolicyBitRate",
