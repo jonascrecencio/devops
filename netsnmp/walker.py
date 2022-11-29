@@ -63,3 +63,4 @@ class cbqosWalker():
             "policy" : rate['policy']
         }
         metric.labels(**prometheus_metric_labels).set(rate['rate'])
+        print('############# rate configurado: ', rate['qos_class'], rate['rate'])
