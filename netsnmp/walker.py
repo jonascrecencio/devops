@@ -30,13 +30,13 @@ class cbqosWalker():
 
         if_rates = []
         for i in range(len(cbqos_type)):
-            if cbqos_type[i].value != 2:
-                pass
+            if cbqos_type[i].value != "2":
+                continue
             policy = cbqos_objects[i].oid.split(".")[-2]
-            rate = next(x.value for x in cbqos_bit_rate if [ x.oid.split(".")[-1] == cbqos_objects[i].oid.split(".")[-1] ])
-            direction = next(x.value for x in cbqos_pol_direction if [ x.oid.split(".")[-1] == policy ])
-            cbqos_class = next(x.value for x in cbqos_classes if [ x.oid.split(".")[-1] == cbqos_objects[i].value ])
-            if_index = next(x.value for x in if_cbqos if [ x.oid.split(".")[-1] == policy ])
+            rate = next(x.value for x in cbqos_bit_rate if x.oid.split(".")[-1] == cbqos_objects[i].oid.split(".")[-1])
+            direction = next(x.value for x in cbqos_pol_direction if x.oid.split(".")[-1] == policy)
+            cbqos_class = next(x.value for x in cbqos_classes if x.oid.split(".")[-1] == cbqos_objects[i].value)
+            if_index = next(x.value for x in if_cbqos if x.oid.split(".")[-1] == policy)
             interface = if_names[int(if_index) - 1].value
             if_rates.append({
                 "rate" : rate,
