@@ -1,2 +1,3 @@
-pyyaml
-prometheus-client
+prometheus_client
+gevent
+easysnmp
