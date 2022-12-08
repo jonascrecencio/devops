@@ -19,7 +19,7 @@ def parse_args():
         "-c", default="public", help="Community string"
     )
     parser.add_argument(
-        "address", help="IP address or hostname to access (required)"
+        "--address", action="append", required=True, help="IP address or hostname to access (required)"
     )
     return parser.parse_args()
 
