@@ -44,7 +44,7 @@ def run():
                 tasks.append(spawn)
             stdout.flush()
             stderr.flush()
-        except Exception:
+        except:
             LOGGER.critical('Unexpected error! Missing OIDs or inconsistent data!')
             pass
         end = time.time()
