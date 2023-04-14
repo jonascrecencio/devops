@@ -44,8 +44,7 @@ def run():
                 tasks.append(spawn)
             stdout.flush()
             stderr.flush()
-        except:
-            LOGGER.critical('Unexpected error! Missing OIDs or inconsistent data!')
+        except Exception:
             pass
         end = time.time()
         time_remaining = SNMP_WALK_INTERVAL - (end - start)
