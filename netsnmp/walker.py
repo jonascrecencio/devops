@@ -25,41 +25,65 @@ class cbqosWalker():
         for host in self.address:
             try:
                 session = Session(hostname=host, community=self.community, version=2)
-                response = session.bulkwalk([
-                    INTERFACE_NAME_OID,
-                    INTERFACE_CBQOS_INDEX,
-                    CBQOS_POLICY_DIRECTION,
-                    CBQOS_CLASSES,
-                    CBQOS_OBJECTS,
-                    CBQOS_TYPE,
-                    CBQOS_BIT_RATE,
-                    CBQOS_POLICY_NAME
-                ])
-                # if_names = session.bulkwalk(INTERFACE_NAME_OID)
-                # if_cbqos = session.bulkwalk(INTERFACE_CBQOS_INDEX)
-                # cbqos_pol_direction = session.bulkwalk(CBQOS_POLICY_DIRECTION)
-                # cbqos_classes = session.bulkwalk(CBQOS_CLASSES)
-                # cbqos_objects = session.bulkwalk(CBQOS_OBJECTS)
-                # cbqos_type = session.bulkwalk(CBQOS_TYPE)
-                # cbqos_bit_rate = session.bulkwalk(CBQOS_BIT_RATE)
-                # cbqos_pol_name = session.bulkwalk(CBQOS_POLICY_NAME)
+                if_names = session.bulkwalk(INTERFACE_NAME_OID)
+                if_cbqos = session.bulkwalk(INTERFACE_CBQOS_INDEX)
+                cbqos_pol_direction = session.bulkwalk(CBQOS_POLICY_DIRECTION)
+                cbqos_classes = session.bulkwalk(CBQOS_CLASSES)
+                cbqos_objects = session.bulkwalk(CBQOS_OBJECTS)
+                cbqos_type = session.bulkwalk(CBQOS_TYPE)
+                cbqos_bit_rate = session.bulkwalk(CBQOS_BIT_RATE)
+                cbqos_pol_name = session.bulkwalk(CBQOS_POLICY_NAME)
             except:
                 LOGGER.error('Failed to snmp bulkwalk host %s!', host)
                 continue
-            LOGGER.info('debug: %s', response)
-            exit(0)
 
             for i in range(len(cbqos_type)):
-                if cbqos_type[i].value != "2":
+                try:
+                    if cbqos_type[i].value != "2":
+                        continue
+                except:
+                    LOGGER.error('No cbQosObjectsType for host %s!', host)
                     continue
-                policy = cbqos_objects[i].oid.split(".")[-2]
-                policy_config = next(x.value for x in cbqos_objects if x.oid.split(".")[-1] == policy and x.oid.split(".")[-2] == policy)
-                policy_name = next(x.value for x in cbqos_pol_name if x.oid.split(".")[-1] == policy_config)
-                rate = next(x.value for x in cbqos_bit_rate if x.oid.split(".")[-1] == cbqos_objects[i].oid.split(".")[-1])
-                direction = next(x.value for x in cbqos_pol_direction if x.oid.split(".")[-1] == policy)
-                cbqos_class = next(x.value for x in cbqos_classes if x.oid.split(".")[-1] == cbqos_objects[i].value)
-                if_index = next(x.value for x in if_cbqos if x.oid.split(".")[-1] == policy)
-                interface = if_names[int(if_index) - 1].value
+                try:
+                    policy = cbqos_objects[i].oid.split(".")[-2]
+                except:
+                    LOGGER.error('No cbQosConfigIndex for host %s!', host)
+                    continue
+                try:
+                    policy_config = next(x.value for x in cbqos_objects if x.oid.split(".")[-1] == policy and x.oid.split(".")[-2] == policy)
+                except:
+                    LOGGER.error('No cbQosConfigIndex for host %s!', host)
+                    continue
+                try:
+                    policy_name = next(x.value for x in cbqos_pol_name if x.oid.split(".")[-1] == policy_config)
+                except:
+                    LOGGER.error('No cbQosServicePolicyEntry for host %s!', host)
+                    continue
+                try:
+                    rate = next(x.value for x in cbqos_bit_rate if x.oid.split(".")[-1] == cbqos_objects[i].oid.split(".")[-1])
+                except:
+                    LOGGER.error('No cbQosCMPostPolicyBitRate for host %s!', host)
+                    continue
+                try:
+                    direction = next(x.value for x in cbqos_pol_direction if x.oid.split(".")[-1] == policy)
+                except:
+                    LOGGER.error('No cbQosPolicyDirection for host %s!', host)
+                    continue
+                try:
+                    cbqos_class = next(x.value for x in cbqos_classes if x.oid.split(".")[-1] == cbqos_objects[i].value)
+                except:
+                    LOGGER.error('No cbQosCMName for host %s!', host)
+                    continue
+                try:
+                    if_index = next(x.value for x in if_cbqos if x.oid.split(".")[-1] == policy)
+                except:
+                    LOGGER.error('No cbQosIfIndex for host %s!', host)
+                    continue
+                try:
+                    interface = if_names[int(if_index) - 1].value
+                except:
+                    LOGGER.error('No ifDescr for host %s!', host)
+                    continue
                 if_rates.append({
                     "device" : host,
                     "interface" : interface,
