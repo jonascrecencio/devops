@@ -31,7 +31,6 @@ class cbqosWalker():
                 cbqos_classes = session.bulkwalk(CBQOS_CLASSES)
                 cbqos_objects = session.bulkwalk(CBQOS_OBJECTS)
                 cbqos_type = session.bulkwalk(CBQOS_TYPE)
-                LOGGER.info('debug: %s!', cbqos_type)   
                 cbqos_bit_rate = session.bulkwalk(CBQOS_BIT_RATE)
                 cbqos_pol_name = session.bulkwalk(CBQOS_POLICY_NAME)
             except:
@@ -94,6 +93,8 @@ class cbqosWalker():
                     "policy_name": policy_name,
                     "rate" : rate
                 })
+            if not cbqos_type:
+                LOGGER.error('Empty bulkwalk response from host %s!', host)
         return if_rates
 
     def define_metric(self):
