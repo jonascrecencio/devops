@@ -27,8 +27,6 @@ class cbqosWalker():
                 session = Session(hostname=host, community=self.community, version=2)
                 if_names = session.bulkwalk(INTERFACE_NAME_OID)
                 if_cbqos = session.bulkwalk(INTERFACE_CBQOS_INDEX)
-                print(if_cbqos)
-                exit(0)
                 cbqos_pol_direction = session.bulkwalk(CBQOS_POLICY_DIRECTION)
                 cbqos_classes = session.bulkwalk(CBQOS_CLASSES)
                 cbqos_objects = session.bulkwalk(CBQOS_OBJECTS)
