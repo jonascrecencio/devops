@@ -7,7 +7,7 @@ import gevent
 import logging
 
 PROMETHEUS_CLIENT_PORT=9105
-SNMP_WALK_INTERVAL=30
+SNMP_WALK_INTERVAL=10
 
 logging.basicConfig()
 logging.root.setLevel(logging.NOTSET)
@@ -31,8 +31,8 @@ def run():
     metric = walker.define_metric()
 
     while True:        
+        start = time.time()
         try:
-            start = time.time()
             qos_if_rates = walker.walk_snmp()
             tasks = []
             for rate in qos_if_rates:
@@ -44,9 +44,9 @@ def run():
                 tasks.append(spawn)
             stdout.flush()
             stderr.flush()
-            end = time.time()
         except Exception:
             pass
+        end = time.time()
         time_remaining = SNMP_WALK_INTERVAL - (end - start)
         wait = time_remaining if time_remaining > 0 else 0
         gevent.sleep(wait)

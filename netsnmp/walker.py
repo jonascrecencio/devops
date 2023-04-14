@@ -25,17 +25,29 @@ class cbqosWalker():
         for host in self.address:
             try:
                 session = Session(hostname=host, community=self.community, version=2)
-                if_names = session.bulkwalk(INTERFACE_NAME_OID)
-                if_cbqos = session.bulkwalk(INTERFACE_CBQOS_INDEX)
-                cbqos_pol_direction = session.bulkwalk(CBQOS_POLICY_DIRECTION)
-                cbqos_classes = session.bulkwalk(CBQOS_CLASSES)
-                cbqos_objects = session.bulkwalk(CBQOS_OBJECTS)
-                cbqos_type = session.bulkwalk(CBQOS_TYPE)
-                cbqos_bit_rate = session.bulkwalk(CBQOS_BIT_RATE)
-                cbqos_pol_name = session.bulkwalk(CBQOS_POLICY_DIRECTION)
+                response = session.bulkwalk([
+                    INTERFACE_NAME_OID,
+                    INTERFACE_CBQOS_INDEX,
+                    CBQOS_POLICY_DIRECTION,
+                    CBQOS_CLASSES,
+                    CBQOS_OBJECTS,
+                    CBQOS_TYPE,
+                    CBQOS_BIT_RATE,
+                    CBQOS_POLICY_NAME
+                ])
+                # if_names = session.bulkwalk(INTERFACE_NAME_OID)
+                # if_cbqos = session.bulkwalk(INTERFACE_CBQOS_INDEX)
+                # cbqos_pol_direction = session.bulkwalk(CBQOS_POLICY_DIRECTION)
+                # cbqos_classes = session.bulkwalk(CBQOS_CLASSES)
+                # cbqos_objects = session.bulkwalk(CBQOS_OBJECTS)
+                # cbqos_type = session.bulkwalk(CBQOS_TYPE)
+                # cbqos_bit_rate = session.bulkwalk(CBQOS_BIT_RATE)
+                # cbqos_pol_name = session.bulkwalk(CBQOS_POLICY_NAME)
             except:
                 LOGGER.error('Failed to snmp bulkwalk host %s!', host)
                 continue
+            LOGGER.info('debug: %s', response)
+            exit(0)
 
             for i in range(len(cbqos_type)):
                 if cbqos_type[i].value != "2":
