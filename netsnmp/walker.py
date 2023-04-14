@@ -25,16 +25,48 @@ class cbqosWalker():
         for host in self.address:
             try:
                 session = Session(hostname=host, community=self.community, version=2)
+            except:
+                LOGGER.error('Failed to open snmp session to host %s!', host)
+                continue
+            try:
                 if_names = session.bulkwalk(INTERFACE_NAME_OID)
+            except:
+                LOGGER.error('Failed to snmp bulkwalk %s host %s!', INTERFACE_NAME_OID, host)
+                continue
+            try:
                 if_cbqos = session.bulkwalk(INTERFACE_CBQOS_INDEX)
+            except:
+                LOGGER.error('Failed to snmp bulkwalk %s host %s!', INTERFACE_CBQOS_INDEX, host)
+                continue
+            try:
                 cbqos_pol_direction = session.bulkwalk(CBQOS_POLICY_DIRECTION)
+            except:
+                LOGGER.error('Failed to snmp bulkwalk %s host %s!', CBQOS_POLICY_DIRECTION, host)
+                continue
+            try:
                 cbqos_classes = session.bulkwalk(CBQOS_CLASSES)
+            except:
+                LOGGER.error('Failed to snmp bulkwalk %s host %s!', CBQOS_CLASSES, host)
+                continue
+            try:
                 cbqos_objects = session.bulkwalk(CBQOS_OBJECTS)
+            except:
+                LOGGER.error('Failed to snmp bulkwalk %s host %s!', CBQOS_OBJECTS, host)
+                continue
+            try:
                 cbqos_type = session.bulkwalk(CBQOS_TYPE)
+            except:
+                LOGGER.error('Failed to snmp bulkwalk %s host %s!', CBQOS_TYPE, host)
+                continue
+            try:
                 cbqos_bit_rate = session.bulkwalk(CBQOS_BIT_RATE)
+            except:
+                LOGGER.error('Failed to snmp bulkwalk %s host %s!', CBQOS_BIT_RATE, host)
+                continue
+            try:
                 cbqos_pol_name = session.bulkwalk(CBQOS_POLICY_NAME)
             except:
-                LOGGER.error('Failed to snmp bulkwalk host %s!', host)
+                LOGGER.error('Failed to snmp bulkwalk %s host %s!', CBQOS_POLICY_NAME, host)
                 continue
 
             for i in range(len(cbqos_type)):
